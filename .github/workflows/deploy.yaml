@@ -12,27 +12,26 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Deploy to VPS
-      uses: appleboy/ssh-action@master
+      uses: appleboy/ssh-action@v0.1.7
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: 64000
         script: |
-            if [ ! -d "/var/www/html/cicd" ]; then
-              mkdir -p /var/www/html/cicd
-            fi
+          PROJECT_DIR="/var/www/html/cicd/mala-dimas-linka"
+          
+          # Make sure directories exist
+          mkdir -p $PROJECT_DIR
+          
+          cd $PROJECT_DIR
 
-            if [ ! -d "/var/www/html/cicd/mala-dimas-linka" ]; then
-              mkdir -p /var/www/html/cicd/mala-dimas-linka
-            fi
+          # Clone or pull latest changes
+          if [ ! -d ".git" ]; then
+            git clone https://github.com/${{ github.repository }}.git .
+          else
+            git pull origin master
+          fi
 
-            cd /var/www/html/cicd/mala-dimas-linka
-
-            if [ ! -d ".git" ]; then
-              git clone https://github.com/${{ github.repository }}.git .
-            else
-              git pull origin master
-            fi
-
-            chmod -R 755 /var/www/html/cicd
+          # Set correct permissions for project only
+          chmod -R 755 $PROJECT_DIR
