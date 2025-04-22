@@ -35,3 +35,5 @@ jobs:
 
           # Set correct permissions for project only
           chmod -R 755 $PROJECT_DIR
+          chmod -R 755 /var/www/html/cicd/mala-dimas-linka/vendor/jquery/ || true
+
